@@ -1,5 +1,5 @@
 import datetime
-from typing import Literal
+from typing import Literal, List
 
 from pydantic import BaseModel
 
@@ -49,6 +49,6 @@ class DeleteAdvResponse(StatusSuccessBase):
     pass
 
 
-class SearchAdvRequest(BaseModel):
+class SearchAdvResponse(BaseModel):
 
-    pass
+    result: List[GetAdvResponse]

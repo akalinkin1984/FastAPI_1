@@ -1,5 +1,7 @@
 import crud
 import fastapi
+from sqlalchemy.future import select
+
 import models
 import schema
 from constants import STATUS_SUCCESS_RESPONSE
@@ -44,7 +46,12 @@ async def delete_adv(adv_id: int, session: SessionDependency):
     return STATUS_SUCCESS_RESPONSE
 
 
-@app.get("/advertisement")
-async def search_adv(query_string: str, session: SessionDependency):
-    search_world = query_string
-    print(query_string)
+@app.get("/advertisement", response_model=schema.SearchAdvResponse)
+async def search_adv(qs_params: str, session: SessionDependency):
+    query = (select(models.Advertisement).
+             filter(models.Advertisement.title.contains(qs_params) |
+                    models.Advertisement.description.contains(qs_params)))
+    data = await session.execute(query)
+    res = data.scalars().all()
+
+    return {'result': res}
